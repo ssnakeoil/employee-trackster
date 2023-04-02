@@ -1,16 +1,8 @@
 const { prompt } = require("inquirer");
-const logo = require("asciiart-logo");
 const db = require("./db");
 require("console.table");
 
-init(); // initializes the app
-
-// Displays the logo text, loads main prompts
-function init() {
-  const logoM = logo({ name: "Employee Manager" }).render();
-  console.log(logoM);
-  loadMainPrompts();
-}
+loadMainPrompts(); // initializes the app
 
 // Loads the main prompts, this is the menu
 function loadMainPrompts() {
