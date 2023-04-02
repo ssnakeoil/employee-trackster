@@ -73,7 +73,7 @@ function deleteDepartment() {
 }
 
 // function that lets you view the total utilized budget of a department
-function viewUtilizedBudget() {
+function viewUtilizedBudgets() {
     
 }
 
