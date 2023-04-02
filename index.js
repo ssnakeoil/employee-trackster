@@ -2,7 +2,7 @@ const { prompt } = require("inquirer");
 const db = require("./db");
 require("console.table");
 
-loadMainPrompts(); // initializes the app
+loadMainPrompts();
 
 // Loads the main prompts, this is the menu
 function loadMainPrompts() {
@@ -255,7 +255,7 @@ function updateEmployeeManager() {
       },
     ]).then((res) => {
       let employeeId = res.employeeId;
-      db.findAllPossibleManagers(employeeId).then(([rows]) => {
+      db.filterOutId(employeeId).then(([rows]) => {
         let managers = rows;
         const managerChoices = managers.map(
           ({ id, first_name, last_name }) => ({
@@ -359,7 +359,7 @@ function addEmployee() {
                 last_name: lastName,
               };
 
-              db.createEmployee(employee);
+              db.newEmployee(employee);
             })
             .then(() =>
               console.log(`Added ${firstName} ${lastName} to the database`)
@@ -396,7 +396,7 @@ function addRole() {
             choices: departmentChoices,
         },
         ])
-        .then((res) => db.createRole(res))
+        .then((res) => db.addRole(res))
         .then(() => console.log("Added role to the database"))
         .then(() => loadMainPrompts());
     });
@@ -433,7 +433,7 @@ function addDepartment() {
         message: "Please enter the name of the department:",
         },
     ])
-        .then((res) => db.createDepartment(res))
+        .then((res) => db.addDepartment(res))
         .then(() => console.log("Added department to the database"))
         .then(() => loadMainPrompts());
 }
