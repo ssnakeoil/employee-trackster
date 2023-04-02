@@ -77,8 +77,8 @@ function loadMainPrompts() {
           value: "VIEW_UTILIZED_BUDGET_BY_DEPARTMENT",
         },
         {
-          name: "Quit",
-          value: "QUIT",
+          name: "Exit",
+          value: "EXIT",
         },
       ],
     },
@@ -130,7 +130,7 @@ function loadMainPrompts() {
         deleteRole();
         break;
       default:
-        quit();
+        exit();
     }
   });
 }
@@ -380,19 +380,105 @@ function addEmployee() {
 }
 
 // function that lets you add a role
-function addRole() {}
+function addRole() {
+    db.findAllDepartments().then(([rows]) => {
+        let departments = rows;
+        const departmentChoices = departments.map(({ id, name }) => ({
+        name: name,
+        value: id,
+        }));
+    
+        prompt([
+        {
+            name: "title",
+            message: "Please enter the title of the role:",
+        },
+        {
+            name: "salary",
+            message: "Please enter the salary for the role:",
+        },
+        {
+            type: "list",
+            name: "department_id",
+            message: "Please select the department for the role:",
+            choices: departmentChoices,
+        },
+        ])
+        .then((res) => db.createRole(res))
+        .then(() => console.log("Added role to the database"))
+        .then(() => loadMainPrompts());
+    });
+}
 
 // function that lets you delete a role
-function deleteRole() {}
+function deleteRole() {
+    db.findAllRoles().then(([rows]) => {
+        let roles = rows;
+        const roleChoices = roles.map(({ id, title }) => ({
+        name: title,
+        value: id,
+        }));
+    
+        prompt([
+        {
+            type: "list",
+            name: "roleId",
+            message: "Which role do you want to delete?",
+            choices: roleChoices,
+        },
+        ])
+        .then((res) => db.deleteRole(res.roleId))
+        .then(() => console.log("Deleted role from the database"))
+        .then(() => loadMainPrompts());
+    });
+}
 
 // function that lets you add a department
-function addDepartment() {}
+function addDepartment() {
+    prompt([
+        {
+        name: "name",
+        message: "Please enter the name of the department:",
+        },
+    ])
+        .then((res) => db.createDepartment(res))
+        .then(() => console.log("Added department to the database"))
+        .then(() => loadMainPrompts());
+}
 
 // function that lets you delete a department
-function deleteDepartment() {}
+function deleteDepartment() {
+    db.findAllDepartments().then(([rows]) => {
+        let departments = rows;
+        const departmentChoices = departments.map(({ id, name }) => ({
+        name: name,
+        value: id,
+        }));
+    
+        prompt([
+        {
+            type: "list",
+            name: "departmentId",
+            message: "Which department do you want to delete?",
+            choices: departmentChoices,
+        },
+        ])
+        .then((res) => db.deleteDepartment(res.departmentId))
+        .then(() => console.log("Deleted department from the database"))
+        .then(() => loadMainPrompts());
+    });
+}
 
 // function that lets you view the total utilized budget of a department
-function viewUtilizedBudgets() {}
+function viewUtilizedBudgets() {
+    db.viewDepartmentBudgets()
+    .then(([rows]) => {
+      let departments = rows;
+      console.log("\n");
+      console.table(departments);
+    })
+    .then(() => loadMainPrompts());
+}
 
 // function that lets you exit the app
 function exit() {
